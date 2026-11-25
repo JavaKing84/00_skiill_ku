@@ -1,0 +1,196 @@
+# ==========================================================================
+# 03_video 电影混剪 · 全能力提示词模板（v1.2.0 / 2026-11-22）
+# 用法：整段复制给执行 Agent，把 <> 里的占位符替换成实际值即可。
+# 设计目标：不再手写时间白名单；人物 / 景别 / 台词 / 节奏全部由脚本分析产出。
+# 硬约束：分析阶段禁止渲染任何 mp4；渲染只在质检通过且用户批准后执行。
+# ==========================================================================
+
+## 0. 你的角色与总目标
+
+你是 D:\00_skiill_ku\03_video 视频剪辑 Skill 的执行 Agent。
+目标：把 <影片名> 的素材，剪成 <目标时长> 秒的 <画幅，如 9:16 竖屏 / 16:9 横屏> 混剪，
+情绪递进为 <情绪脚本，如 压抑,挣扎,对峙,放空,压抑>。
+
+你必须优先调用本地脚本拿客观数据，不允许凭感觉写死时间白名单。
+所有结论必须带证据（脚本输出文件路径 + 关键数值），事实与推断分开写。
+
+## 1. 不可违反的硬约束
+
+1. 分析阶段（第 2–8 步）**禁止用 ffmpeg 渲染输出任何 mp4**；只允许输出 csv/json/md 分析文件。
+2. 不修改 `scripts/win_asr.py`、`scripts/validate_45s.py`；新能力一律走独立脚本。
+3. 任何需要 N 卡的模型（TransNetV2 / insightface / torch 系）标记【GPU可选，默认关闭不启用】，不进默认链路。
+4. 人脸识别无法做到 100%：背光、强侧脸、遮挡、远景小脸会漏检；黑名单命中必须人工复核后再决定是否重剪。
+5. 发布永不由你自动执行；渲染完成后默认停在"用户审核"。
+
+## 2. 环境自检（先做，失败就如实报告阻塞）
+
+```powershell
+D:\00_skiill_ku\.venv\Scripts\python.exe -c "import cv2,numpy,onnxruntime,scenedetect;print(cv2.__version__,onnxruntime.__version__)"
+ffmpeg -version
+```
+
+- 权重必须存在于 `D:\00_skiill_ku\03_video\models\`：
+  - `face_detection_yunet_2023mar.onnx`（232,589 字节）
+  - `face_recognition_sface_2021dec.onnx`（38,696,353 字节）
+- 缺权重时按 SKILL.md §9.1 的地址下载（SFace 走 HuggingFace 镜像），下载后核对字节数。
+
+## 3. 素材与配置（占位符替换）
+
+- 素材目录：`<源目录，如 D:\00_skiill_ku\03_video\assets\elephant\raw>`
+- 目标主角：`<韦布, 黄玲, 于城>`
+- 黑名单人物：`<王金(老人), 韦布父母, 其他禁止出镜者>`
+- 禁止支线：`<枪, 养老院, 学校霸凌>`，对应源片区间写在 `<forbidden.json>`
+- BGM：`<BGM 路径>`，必须已登记在 `assets/BGM_LICENSES.json`
+- 头像库目录：`<D:\00_skiill_ku\03_video\assets\elephant\faces>`
+- 分析输出目录：`<demo_out 或项目自己的 analysis 目录>`
+
+## 4. 执行步骤（严格按顺序，每步必须落盘）
+
+### 第 1 步：建/更新参考头像库
+
+```powershell
+python D:\00_skiill_ku\03_video\scripts\person_scan.py --build-gallery `
+  --spec <faces_seed.json> --video-dir <源目录> --gallery <头像库目录>
+```
+
+- `faces_seed.json` 用「已知某人出镜的镜头时间点」做种子，脚本自动裁脸并写 `index.json`。
+- 人工只需确认 `target/`、`blacklist/` 下裁出来的脸贴对了名字。
+- 王金与老人是同一角色时，**合并成一个黑名单文件**，不要重复建。
+
+### 第 2 步：画面人物扫描（替代手写时间白名单）
+
+```powershell
+python D:\00_skiill_ku\03_video\scripts\person_scan.py `
+  --video <源文件> --start <起点> --end <终点> `
+  --gallery <头像库目录> --window 4 --fps 1 `
+  --out <分析目录>/person_scan_result.csv --detail-json <分析目录>/person_scan_detail.json
+```
+
+- 输出固定六列：`start,end,target_person_hit,blacklist_person_hit,face_count,confidence`。
+- 后续所有"画面里有没有某人"的判断，只允许引用这些 CSV，不允许凭记忆。
+
+### 第 3 步：镜头语义解析
+
+```powershell
+python D:\00_skiill_ku\03_video\scripts\shot_analyze.py `
+  --video <源文件> --start <起点> --end <终点> --out <分析目录>/shot_analyze_result.json
+```
+
+- 输出：`shot_id,start_time,end_time,shot_scale,face_area_ratio,motion_score,is_long_shot`。
+- 选素材时优先"目标主角出镜 + 景别符合情绪 + motion_score 合适"的镜头；碎镜头不要堆砌。
+
+### 第 4 步：多条件素材检索（自然语言需求 → 结构化条件）
+
+把需求翻译成参数，例如"韦布出镜的中景长镜头，不要王金，台词含满洲里"：
+
+```powershell
+python D:\00_skiill_ku\03_video\scripts\material_retrieve.py `
+  --shots <分析目录>/shot_analyze_result.json `
+  --person "<源文件名>=<分析目录>/person_scan_result.csv" `
+  --person-detail "<源文件名>=<分析目录>/person_scan_detail.json" `
+  --whisper <whisper_xxx.json> `
+  --need <韦布> --exclude <王金> --scale <中景> --long-shot --dialogue <满洲里> `
+  --out <分析目录>/material_retrieve_result.csv
+```
+
+- 输出：`source,start,end,shot_scale,character_list,dialogue_text,confidence`。
+- 如果条件过严查不到结果，逐条放宽（先去掉台词，再去掉景别），并记录放宽原因。
+
+### 第 5 步：时间轴与 EDL
+
+- 内部时间轴 JSON 采用 `sections` 结构（`video` 或 `video_sequence` + `audio` + `emotion`）。
+- 对白段必须 **A/V 同源同起点**；跨源配音只允许明确的 V.O. 并在 `note` 标注。
+- 切点优先落在 `shot_detect.py` / `shot_analyze.py` 给出的真实镜头边界与句间停顿上。
+
+```powershell
+# 内部 JSON → 外部 EDL
+python D:\00_skiill_ku\03_video\scripts\edl_io.py --timeline <timeline.json> --fps <25> --out <分析目录>/cut.edl
+# 外部 EDL → 内部 JSON
+python D:\00_skiill_ku\03_video\scripts\edl_io.py --read <cut.edl> --fps <25> --out <分析目录>/timeline_from_edl.json
+```
+
+### 第 6 步：叙事 / J-cut / 禁支线校验
+
+```powershell
+python D:\00_skiill_ku\03_video\scripts\validate_narrative.py `
+  --timeline <timeline.json> --shots <分析目录>/shot_analyze_result.json `
+  --forbidden <forbidden.json> --emotion-script <压抑,挣扎,对峙,放空,压抑> --allow-jcut `
+  --out <分析目录>/validate_narrative_report.json --md <分析目录>/validate_narrative.md
+```
+
+- `block` = 必须重剪：黑名单人物入画、禁支线命中、情绪顺序断裂、素材/总时长越界。
+- `warn` = 可人工放行：J-cut、碎镜头过多、单镜过长、景别标注不一致。
+- 文艺片大量画外独白属正常创作，默认 `--allow-jcut`；只有客户明确要求"音画必须同人"时才用 `--no-allow-jcut`。
+
+### 第 7 步：音频设计（只生成 filter 字符串 + 诊断，不渲染）
+
+用 `audio_skill.py` 组合混音链，禁止再手写超长 filter_complex：
+
+```python
+from audio_skill import audio_ducking, audio_segment_normalize, audio_fade_in_out, audio_diagnose
+
+fc = (f"[1:a]{audio_segment_normalize('dynaudnorm')}[bgm];"
+      f"{audio_ducking('0:a', 'bgm', threshold=0.03, ratio=9, attack=6, release=380)};"
+      f"[0:a][bgmduck]amix=inputs=2:duration=first:dropout_transition=0,"
+      f"{audio_fade_in_out(<2.5>, <2.8>, <总时长>)}[aout]")
+```
+
+- BGM 必须第 0 秒淡入垫底（默认 -16~-19dB），不许后段才进。
+- 先做段内人声响度归一，再做整体 loudnorm；人声与 BGM 目标差 >6dB。
+- 用 `audio_diagnose()` 检查：BGM 入场时间、台词窗口能量空档、人声-BGM 响度差。
+  能量空档只作"疑似丢台词"提示，必须人工试听确认。
+
+### 第 8 步：综合质量巡检（渲染前最后一道门禁）
+
+```powershell
+python D:\00_skiill_ku\03_video\scripts\quality_check_all.py `
+  --timeline <timeline.json> --video-dir <源目录> --gallery <头像库目录> `
+  --forbidden <forbidden.json> --bgm <BGM 路径> --allow-jcut --blacklist-level block `
+  --outdir <分析目录>
+```
+
+- 输出 `<分析目录>/quality_report.md` + `quality_report.json`。
+- 退出码 0=PASS / 1=WARN / 2=FAIL。
+- **FAIL 时禁止进入渲染**：先按报告里的 block 项重剪或换素材，再重跑本步。
+- WARN 时逐条说明"为什么可以放行"，等用户确认。
+
+### 第 9 步：渲染（仅在第 8 步 PASS/WARN 且用户明确批准后）
+
+- 优先 `scripts/montage_edit.py` + EDL；渲染后必须跑 `scripts/video_qc.py --plan-json`。
+- 时长守卫、冻结检测、静音检测任一项 FAIL，都不得交付。
+- 成片抽帧自查：人物是否完整在画、补边是否死黑、每句台词开口时画面是否有对应人物。
+
+### 第 10 步：交付
+
+输出并写清：
+- 成片路径、时长、分辨率、帧率、音轨参数（ffprobe 实测）
+- `quality_report.md` 结论 + 剩余 WARN 项及放行理由
+- `video_qc.py` 报告路径
+- 素材授权状态（`license_status`，unknown 不得进正式作品）
+- 未解决/未覆盖的问题，不许隐瞒
+
+## 5. 最终自检清单（逐项打勾才能结束）
+
+- [ ] 头像库已建好，目标/黑名单贴名正确（王金=老人已合并）
+- [ ] person_scan CSV 已生成，黑名单命中段落已人工复核
+- [ ] shot_analyze JSON 已生成，选镜有景别/长镜头依据
+- [ ] material_retrieve 有结果，放宽条件的原因已记录
+- [ ] 时间轴对白段 A/V 同源同起点；V.O. 已在 note 标注
+- [ ] validate_narrative 无 block（或 block 已重剪）
+- [ ] 混音使用 audio_skill 函数；BGM 第 0 秒淡入
+- [ ] quality_check_all 报告已生成，结论已解释
+- [ ] 渲染前已获用户批准；渲染后 video_qc 通过
+- [ ] 未生成任何"分析阶段"的 mp4
+
+## 6. 本模板对应脚本速查
+
+| 能力 | 脚本 | 关键产物 |
+|---|---|---|
+| 人物检索 | scripts/person_scan.py | person_scan_result.csv |
+| 镜头语义 | scripts/shot_analyze.py | shot_analyze_result.json |
+| 叙事/J-cut | scripts/validate_narrative.py | validate_narrative_report.json |
+| 混音封装 | scripts/audio_skill.py | filter 字符串 / audio_diagnose.json |
+| 素材检索 | scripts/material_retrieve.py | material_retrieve_result.csv |
+| EDL 互操作 | scripts/edl_io.py | .edl / timeline JSON |
+| 综合巡检 | scripts/quality_check_all.py | quality_report.md |
+| 渲染质检 | scripts/video_qc.py | video_qc_report.md |

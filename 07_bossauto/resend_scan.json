@@ -1,0 +1,402 @@
+[
+  {
+    "i": 0,
+    "time": "19:40",
+    "txt": "19:40 张女士京北方HR [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 1,
+    "time": "19:40",
+    "txt": "19:40 王女士觅玄科技HRBP [图片]",
+    "mineCount": 2,
+    "chatImgs": 1,
+    "hasImg": true,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "HAS_IMG"
+  },
+  {
+    "i": 2,
+    "time": "19:40",
+    "txt": "19:40 杨文洁小马智行人力资源经理 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 3,
+    "time": "19:40",
+    "txt": "19:40 何女士猿编程HR [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 4,
+    "time": "19:40",
+    "txt": "19:40 冼女士点众科技招聘者 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "已读 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 5,
+    "time": "19:39",
+    "txt": "19:39 谈先生长亭科技招聘负责人 [图片]",
+    "mineCount": 2,
+    "chatImgs": 1,
+    "hasImg": true,
+    "greeting": "19:11 送达 熟悉python和go开发，能够长期实习",
+    "state": "HAS_IMG"
+  },
+  {
+    "i": 6,
+    "time": "19:39",
+    "txt": "19:39 朱硕慧策旺店通-掌上先机招聘者 [图片]",
+    "mineCount": 2,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "已读 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 7,
+    "time": "19:39",
+    "txt": "19:39 张东海颐和盛景招聘者 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 8,
+    "time": "19:39",
+    "txt": "19:39 柳女士字节跳动HRBP [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 9,
+    "time": "19:39",
+    "txt": "19:39 牟女士花房集团HR [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 10,
+    "time": "19:38",
+    "txt": "19:38 文睿婷敦煌网战略招聘专家 [图片]",
+    "mineCount": 2,
+    "chatImgs": 1,
+    "hasImg": true,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "HAS_IMG"
+  },
+  {
+    "i": 11,
+    "time": "19:38",
+    "txt": "19:38 孙女士合思招聘者 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "19:11 送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 12,
+    "time": "19:38",
+    "txt": "19:38 孙江林智乐活招聘者 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 13,
+    "time": "19:38",
+    "txt": "19:38 顾女士Shopee招聘者 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 14,
+    "time": "19:38",
+    "txt": "19:38 林女士中国电子云HR [图片]",
+    "mineCount": 2,
+    "chatImgs": 1,
+    "hasImg": true,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "HAS_IMG"
+  },
+  {
+    "i": 15,
+    "time": "19:37",
+    "txt": "19:37 刘女士威派格招聘者 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 16,
+    "time": "19:37",
+    "txt": "19:37 钟先生爱学习教育集团招聘主管 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 17,
+    "time": "19:37",
+    "txt": "19:37 李芳琳颐和盛景人事 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 18,
+    "time": "19:37",
+    "txt": "19:37 王先生小红书招聘者 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 19,
+    "time": "19:37",
+    "txt": "19:37 蔡女士点点互动hrbp [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "19:13 送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 20,
+    "time": "19:36",
+    "txt": "19:36 翟女士启明星辰招聘专员 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 21,
+    "time": "19:36",
+    "txt": "19:36 汤女士北京睿法智行科技人事总监 [图片]",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 22,
+    "time": "19:36",
+    "txt": "19:36 吴女士科锐国际猎头顾问 [图片]",
+    "mineCount": 3,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "已读 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 23,
+    "time": "19:36",
+    "txt": "19:36 张先生南京予芯招聘主管 [送达] [图片]",
+    "mineCount": 2,
+    "chatImgs": 1,
+    "hasImg": true,
+    "greeting": "已读 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "HAS_IMG"
+  },
+  {
+    "i": 24,
+    "time": "19:21",
+    "txt": "19:21 李女士法本招聘经理 [送达] [图片]",
+    "mineCount": 2,
+    "chatImgs": 1,
+    "hasImg": true,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "HAS_IMG"
+  },
+  {
+    "i": 25,
+    "time": "19:09",
+    "txt": "19:09 敖女士水滴公司招聘HR [送达] 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 26,
+    "time": "18:59",
+    "txt": "18:59 周锦云融天下招聘顾问 [送达] 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 27,
+    "time": "18:59",
+    "txt": "18:59 郭雅妃房懂懂招聘经理 [已读] 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "已读 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 28,
+    "time": "18:58",
+    "txt": "18:58 禄女士纬致芯创科技招聘专员 [送达] 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 29,
+    "time": "18:58",
+    "txt": "18:58 赵云嘉微创软件招聘者 [送达] 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 30,
+    "time": "18:58",
+    "txt": "18:58 韩先生科锐国际猎头顾问 [送达] 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 您好，我是华北电力大学(211)28届毕业生。熟悉python和go语言开发，希望能长期实习。",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 31,
+    "time": "18:56",
+    "txt": "18:56 刘先生aiXcoder经理 [送达] 熟悉python和go开发，能够长期实习",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 32,
+    "time": "18:56",
+    "txt": "18:56 王女士易车HRBP [送达] 熟悉python和go开发，能够长期实习",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "18:56 送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 33,
+    "time": "18:56",
+    "txt": "18:56 孙女士测测HR [送达] 熟悉python和go开发，能够长期实习",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 34,
+    "time": "18:56",
+    "txt": "18:56 张女士神州数码HR [送达] 熟悉python和go开发，能够长期实习",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 35,
+    "time": "17:15",
+    "txt": "17:15 张静亦心科技招聘专员 感谢您的关注和投递，但当前职位需要与您背景不太相符的资质。祝您在BOSS直聘找到更合适的工作！",
+    "mineCount": 2,
+    "chatImgs": 1,
+    "hasImg": true,
+    "greeting": "11-22 14:57 已读 熟悉python和java开发，希望找到相关的实习",
+    "state": "HAS_IMG"
+  },
+  {
+    "i": 36,
+    "time": "15:50",
+    "txt": "15:50 陈先生盒马鲜生仓主管 好的",
+    "mineCount": 2,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "15:42 已读 我找的是实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 37,
+    "time": "10:53",
+    "txt": "10:53 黄女士猿编程招聘负责人 抱歉不是很合适哈～",
+    "mineCount": 1,
+    "chatImgs": 0,
+    "hasImg": false,
+    "greeting": "送达 熟悉python和go开发，能够长期实习",
+    "state": "NEED_IMG"
+  },
+  {
+    "i": 38,
+    "time": "10:18",
+    "txt": "10:18 贺女士北京鱼伯企业服务HR 你好👋，如果你对我的职位感兴趣的话，我愿意为你介绍一下我们这边的待遇、环境和发展晋升空间，等待你的",
+    "mineCount": 1,
+    "chatImgs": 1,
+    "hasImg": true,
+    "greeting": "19:42",
+    "state": "HAS_IMG"
+  },
+  {
+    "i": 39,
+    "time": "01:36",
+    "txt": "01:36 沈方艺九维图灵人力资源HRBP 感谢您的关注，暂时不合适该职位",
+    "mineCount": 2,
+    "chatImgs": 1,
+    "hasImg": true,
+    "greeting": "昨天 13:58 已读 熟悉python和go开发，能够长期实习",
+    "state": "HAS_IMG"
+  }
+]

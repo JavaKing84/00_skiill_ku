@@ -1,0 +1,101 @@
+{
+  "version": "1.0.0",
+  "skill_version": "1.2.0",
+  "apply_purge": false,
+  "observation_days": 14,
+  "snapshots": {
+    "raw_days": 90,
+    "daily_keep_days": 400
+  },
+  "retention_days": {
+    "default": 180,
+    "reddit_comment": 90,
+    "github": 3650,
+    "perm": 36500,
+    "low_value": 30,
+    "promo_goods": 7,
+    "promo_other": 14,
+    "snapshot": 90,
+    "security": 365
+  },
+  "low_value_categories": [
+    "goods",
+    "trade",
+    "invite",
+    "carpool",
+    "other",
+    "noise"
+  ],
+  "perm_tiers": [
+    "P0"
+  ],
+  "project_profiles": {
+    "ai-robot": [
+      "robot",
+      "robotics",
+      "vla",
+      "embodied",
+      "具身",
+      "机器人",
+      "sim2real",
+      "manipulation",
+      "机械臂",
+      "navigation",
+      "多模态感知",
+      "仿真"
+    ],
+    "small-model": [
+      "fine-tun",
+      "finetune",
+      "lora",
+      "qlora",
+      "distill",
+      "quantiz",
+      "gguf",
+      "llama.cpp",
+      "mlx",
+      "微调",
+      "量化",
+      "蒸馏",
+      "小模型",
+      "sft",
+      "dpo"
+    ],
+    "douyin-growth": [
+      "ffmpeg",
+      "剪辑",
+      "字幕",
+      "配音",
+      "短视频",
+      "remotion",
+      "自动化",
+      "内容运营",
+      "素材",
+      "口播",
+      "cover",
+      "caption"
+    ],
+    "ai-agent": [
+      "agent",
+      "multi-agent",
+      "mcp",
+      "workflow",
+      "tool-use",
+      "rag",
+      "智能体"
+    ]
+  },
+  "value_weights": {
+    "novelty": 30,
+    "quality": 20,
+    "community": 15,
+    "maintenance": 10,
+    "cross_source": 10,
+    "relevance": 15
+  },
+  "tier_thresholds": {
+    "P0": 85,
+    "P1": 65,
+    "P2": 40
+  }
+}

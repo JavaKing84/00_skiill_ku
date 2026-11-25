@@ -1,0 +1,45 @@
+{
+  "banned_until": "2026-11-26T17:20:00",
+  "banned_note": "2026-11-25 17:20 二次封禁 24h（账号级）：17:06-17:12 六分钟内投出 22 份，招呼语+简历图完全模板化，扩展未按 deliveryLimit/间隔执行",
+  "banned_history": [
+    {
+      "detected_at": "2026-11-24T21:00:00",
+      "until": "2026-11-24T22:52:00",
+      "scope": "account",
+      "evidence": "用户手机切换移动数据后仍显示封禁至 22:52",
+      "root_cause": "19:44-20:15 期间两个脚本并发操作同一聊天页 + 一分钟内数十次会话切换 + 批量发图，频率特征异常"
+    }
+  ],
+  "2026-11-23": {
+    "applied": 8,
+    "note": "00:50-00:53 smoke test 8 条（含图片招呼），limit 曾临时设为 3 但扩展按日计数未生效，已恢复 150"
+  },
+  "2026-11-24": {
+    "applied": 23,
+    "usedAtStart": 40,
+    "lastRunAt": "2026-11-24T11:53:58.785Z",
+    "note": "19:16 对账修正：以 ext today.success=18 为真值；早间 state=1 为陈旧值",
+    "suspended": {
+      "reason": "LIMIT_EXHAUSTED",
+      "applied": 5,
+      "left": 35,
+      "at": "2026-11-24T12:03:38.156Z",
+      "message": "今日沟通额度已达上限，已成功投递 5 份，任务安全挂起，等待明日重置（LIMIT_EXHAUSTED）",
+      "resume": "等待明日重置"
+    }
+  },
+  "2026-11-25": {
+    "applied": 22,
+    "usedAtStart": 0,
+    "lastRunAt": "2026-11-25T09:12:30.000Z",
+    "note": "手动定向 run（查询=测试开发 实习，目标大厂）。扩展未按 deliveryLimit=1 与 big4 公司白名单过滤，6 分钟内投出 22 份（含字节/快手等，也含非白名单公司），人工暂停。当日停止，不再运行。",
+    "suspended": {
+      "reason": "DAILY_QUOTA_REACHED",
+      "applied": 22,
+      "left": 0,
+      "at": "2026-11-25T09:12:30.000Z",
+      "message": "今日已投 22 份，超过保号上限 10 份，已人工暂停，等待明日重置",
+      "resume": "等待明日重置"
+    }
+  }
+}

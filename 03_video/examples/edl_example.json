@@ -1,0 +1,46 @@
+{
+  "_doc": "EDL（Edit Decision List）示例与字段说明。montage_edit.py 按 segments 顺序逐段裁剪拼接，速度恒定 1.0x，禁止慢放/补帧凑时长。",
+  "_fields": {
+    "width/height": "输出画幅像素",
+    "fps": "统一帧率",
+    "grade": "调色预设：none | dark_cool | warm_film",
+    "fade_out": "片尾音频淡出秒数",
+    "bgm": "可选 {path, gain_db, verified_identity}；BGM 必须登记在 assets/BGM_LICENSES.json",
+    "segments[].src": "源素材路径（渲染前会校验文件存在且可解析）",
+    "segments[].start": "从源素材的第几秒开始取（>=0）",
+    "segments[].dur": "取多少秒（>0）。守卫规则：start+dur 不得超过源素材实际时长",
+    "segments[].label": "段落标签，便于 QC 报告对照"
+  },
+  "_gates": [
+    "守卫1（渲染前）：start+dur ≤ 源时长，超出直接 BLOCKED",
+    "守卫2（每段渲染后）：实际段时长与计划 dur 偏差 > 0.35s 即报错",
+    "守卫3（成片后）：成片时长 vs 计划总时长偏差 > 1.0s 即退出码 2",
+    "QC 兜底：video_qc.py --plan-json <本脚本输出的报告.json> 复核时长 + 冻结 + 静音"
+  ],
+  "width": 1080,
+  "height": 1920,
+  "fps": 30,
+  "grade": "none",
+  "fade_out": 2.0,
+  "bgm": {},
+  "segments": [
+    {
+      "src": "E:/Trae_Video_Workspace/materials/clip_a.mp4",
+      "start": 2.0,
+      "dur": 3.5,
+      "label": "开场"
+    },
+    {
+      "src": "E:/Trae_Video_Workspace/materials/clip_b.mp4",
+      "start": 0.5,
+      "dur": 4.0,
+      "label": "主体"
+    },
+    {
+      "src": "E:/Trae_Video_Workspace/materials/clip_c.mp4",
+      "start": 0.0,
+      "dur": 2.5,
+      "label": "收尾"
+    }
+  ]
+}

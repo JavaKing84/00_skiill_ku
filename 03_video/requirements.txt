@@ -1,0 +1,38 @@
+# ============================================================
+# 03_video 依赖清单（能力补齐专项）
+# 环境基线：Windows + Python 3.14.7 + 无独立显卡（纯 CPU）
+# 选型原则：CPU 可本地运行 > Windows 兼容 > GitHub 高 Star > 可对接 FFmpeg 流水线
+#
+# 安装（只装必装）：
+#   D:\00_skiill_ku\.venv\Scripts\python.exe -m pip install -r requirements.txt
+# 注意：本文件把“可选”项写成注释，默认 pip 不会安装 GPU 相关包。
+# ============================================================
+
+# ------------------------------------------------------------
+# 【必装依赖】 7 个新增模块 + 既有脚本的主链路都依赖这些
+# ------------------------------------------------------------
+numpy>=1.26,<3.0            # 帧差 / 音频包络 / 人脸特征向量运算
+opencv-python>=4.8          # YuNet 预处理、SFace(alignCrop/feature)、抽帧读写
+onnxruntime>=1.16           # 直接推理 YuNet（OpenCV 5.1 的 FaceDetectorYN 实测失效）
+scenedetect>=0.6.4          # PySceneDetect：镜头边界（shot_analyze 复用）
+Pillow>=10.0                # 既有 verify_asset.py / render.py 的图片与字幕处理
+
+# 系统外部依赖（不通过 pip 安装，必须在 PATH 中）：
+#   ffmpeg  >= 6.0（本轮实测 9.0.2）
+#   ffprobe >= 6.0（随 ffmpeg 一起安装）
+
+# ------------------------------------------------------------
+# 【可选依赖 · CPU】非默认必装；用到对应能力时再装
+# ------------------------------------------------------------
+# faster-whisper>=1.0       # win_asr.py 本地转写（词级时间戳）；不装则无法生成台词库
+# opencv-contrib-python>=4.8  # 仅当 opencv-python 缺少 cv2.FaceRecognizerSF 时替换安装（二选一，不要同时装）
+
+# ------------------------------------------------------------
+# 【可选 GPU 依赖】默认关闭、不启用；必须 N 卡 + CUDA 才能跑
+# 标记【GPU可选，默认关闭不启用】，任何脚本在无 GPU 时都不得依赖这些包
+# ------------------------------------------------------------
+# onnxruntime-gpu>=1.16     # 想用 GPU 跑 YuNet 时才装（替换 onnxruntime，不要两个同时装）
+# torch>=2.2                # facenet-pytorch / 其它深度人脸方案（本机 Python 3.14 无轮子）
+# torchvision>=0.17
+# tensorflow>=2.15          # TransNetV2 学习型镜头切分（【GPU可选，默认关闭不启用】）
+# insightface>=0.7          # ArcFace 方案，安装需 C++ Build Tools，权重另有许可限制

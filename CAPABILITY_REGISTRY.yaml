@@ -1,0 +1,443 @@
+# CAPABILITY_REGISTRY.yaml — 个人 AI 能力注册表（机器可读）
+# schema: capability-registry-v1
+# 维护规则：状态只能取 DISCOVERED/CONFIGURED/CONNECTED/PASS/PARTIAL/BLOCKED/FAIL/NOT_TESTED/DEPRECATED
+# 任何 PASS 必须能在 _reports/ 或 _logs/ 找到命令与输出证据；凭据字段只写变量名，永不写真值。
+version: "1.0"
+updated_at: "2026-11-24"
+capabilities:
+
+  - id: C01
+    name: 反爬网页采集
+    description: 按 P0-P5 协议完成定性、选型、渲染抓取、故障排查与验证
+    preferred_impl: 01_crawler（WS-01~08 文档协议）+ Playwright/Camoufox 运行时
+    alternatives: [requests+裸HTTP(仅简单站), scrapling(repos/claude-code-skill-scrapling)]
+    depends_on:
+      skill: [01_crawler/SKILL.md, skills/web-scraping/08_unified_collection_contract.md]
+      mcp: []
+      cli: [python, playwright]
+      api: []
+    install_steps:
+      - 复制 01_crawler 整个目录（纯 Markdown + 仓库，无生态绑定）
+      - 确认 PLAYWRIGHT_BROWSERS_PATH 指向浏览器内核（本机为 D:\00_skiill_ku\01_crawler\runtime\Playwright）
+    config_requirements: [环境变量 PLAYWRIGHT_BROWSERS_PATH]
+    verify_steps:
+      - python -c "import playwright; print(playwright.__version__)"
+      - tests 中本地 HTML fixture 解析用例
+    limits: 登录墙/验证码/付费墙停止，不绕过；真实浏览器渲染本轮未启动（NOT_TESTED），协议与运行时路径已验证
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PARTIAL
+
+  - id: C02
+    name: 统一采集清单与去重
+    description: 素材/情报双适配器共用 manifest、SHA256 两级去重、限速、断点
+    preferred_impl: _shared/skillkit/manifest.py + policy.py
+    alternatives: [各脚本内联实现(不推荐，违反单一契约)]
+    depends_on: {skill: [01_crawler/skills/web-scraping/08_unified_collection_contract.md], mcp: [], cli: [python], api: []}
+    install_steps: [复制 _shared 目录并保持相对路径]
+    config_requirements: []
+    verify_steps: [python tests/test_skillkit_contract.py]
+    limits: 线程安全仅限单进程；并发需求需换 SQLite 级去重
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+
+  - id: C03
+    name: 素材下载与验证
+    description: 带退避限速下载，PIL/ffprobe 解码验证，写 assets_manifest.json
+    preferred_impl: 03_video/scripts/verify_asset.py
+    alternatives: [material_crawler.py（Trae 素材技能内置，多源聚合）]
+    depends_on: {skill: [03_video/SKILL.md], mcp: [], cli: [python, ffprobe], api: []}
+    install_steps: [pip 依赖 requests pillow（本机全局已装）]
+    config_requirements: []
+    verify_steps: [python tests/test_video_pipeline.py（含公开小文件下载用例）]
+    limits: 授权未知素材 license_status=unknown，禁止进正式作品
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+
+  - id: C04
+    name: 参考视频逆向分析
+    description: ffprobe+场景检测+抽帧，输出 timeline CSV 与 reference_style.json
+    preferred_impl: 03_video/scripts/reference_analyze.py
+    alternatives: [aitoearn byted-mediakit-media-understand（云端，需 MCP）]
+    depends_on: {skill: [03_video/SKILL.md], mcp: [], cli: [python, ffmpeg, ffprobe], api: []}
+    install_steps: []
+    config_requirements: []
+    verify_steps: [对合成 fixture 视频跑 reference_analyze 并校验 JSON 字段]
+    limits: 画面语义描述需模型看帧补全，脚本不编造内容
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+
+  - id: C05
+    name: 本地确定性视频渲染与质检
+    description: ffmpeg 渲染 + 多维度 QC（黑屏/音量/画幅/抽帧），退出码之外的门禁
+    preferred_impl: ffmpeg 9.0.2 + 03_video/scripts/video_qc.py
+    alternatives: [Remotion(程序化模板，待评估), CloudEdit(云端，需 aitoearn MCP)]
+    depends_on: {skill: [03_video/SKILL.md, aitoearn/SKILL.md(已验证滤镜链)], mcp: [], cli: [ffmpeg, ffprobe, python], api: []}
+    install_steps: []
+    config_requirements: [字体 C:\Windows\Fonts\msyhbd.ttc（drawtext 字幕时）]
+    verify_steps: [lavfi 合成视频→QC→断言 verdict]
+    limits: BGM 兜底文件 bgm.mp3 当前缺失（BLOCKED 人工补料）
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+
+  - id: C06
+    name: 多平台发布（dry-run 边界内）
+    description: 生成脱敏发布预览；真实发布需逐次人工批准
+    preferred_impl: 03_video/scripts/publish_preview.py（dry-run）
+    alternatives: [aitoearn-cn MCP channel-publish（批准后正式发布）]
+    depends_on: {skill: [03_video/SKILL.md], mcp: [aitoearn-cn], cli: [python], api: [https://aitoearn.cn/api/ai/agent/mcp]}
+    install_steps: [mcp.json 注册 remote MCP，header X-Api-Key 用变量引用，cn/ai 站点密钥不通用]
+    config_requirements: [X-Api-Key（人工配置，禁止入库）]
+    verify_steps: [publish_preview.py 生成 md/json，断言无网络调用]
+    limits: 无人值守期间禁止真实公开发布；正式发布仍 BLOCKED（需人工批准+有效密钥）
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PARTIAL
+
+  - id: C07
+    name: Folo 订阅情报
+    description: 读取用户 Folo 订阅与正文
+    preferred_impl: folo MCP（npx -y folo-mcp）
+    alternatives: [Playwright 抓 folo web 未读列表, RSSHub 自建 RSS]
+    depends_on: {skill: [06_techradar/SKILL.md], mcp: [folo], cli: [npx], api: []}
+    install_steps: [mcp.json 的 folo.env.FOLO_SESSION_TOKEN 填入有效会话]
+    config_requirements: [FOLO_SESSION_TOKEN]
+    verify_steps: [MCP subscription_list 返回订阅列表]
+    limits: "当前 BLOCKED: AUTH_REQUIRED（2026-11-17 实测）"
+    supported_clients: [trae, workbuddy, claude-code, generic-agent]
+    status: BLOCKED
+
+  - id: C08
+    name: Reddit 社区情报
+    description: 读取 subreddit 帖子与评论
+    preferred_impl: reddit MCP（reddit-mcp-buddy）
+    alternatives: [Playwright 抓 old.reddit.com, WebSearch site:reddit.com]
+    depends_on: {skill: [06_techradar/SKILL.md], mcp: [reddit], cli: [npx], api: [Reddit OAuth API]}
+    install_steps: [developers.reddit.com/app-registration 建 app，env 配 REDDIT_CLIENT_ID/SECRET]
+    config_requirements: [REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET]
+    verify_steps: [MCP browse_subreddit 返回 posts]
+    limits: "匿名 RSS 2026-11-13 终止；当前 BLOCKED: AUTH_REQUIRED"
+    supported_clients: [trae, workbuddy, claude-code, generic-agent]
+    status: BLOCKED
+
+  - id: C09
+    name: 公开源情报采集与情报库
+    description: HN/GitHub 公开 API 采集，SQLite 去重、读取状态、分析台账
+    preferred_impl: 06_techradar/scripts/collect_public.py + skillkit/inteldb.py
+    alternatives: [WebSearch 手工整理（无持久化，不推荐）]
+    depends_on: {skill: [06_techradar/SKILL.md], mcp: [], cli: [python], api: [hn.algolia.com, api.github.com]}
+    install_steps: []
+    config_requirements: []
+    verify_steps: [连跑两次 collect_public，第二次 duplicate 数等于 fetched 数（实测 10/10）]
+    limits: 公开源不等同用户订阅；GitHub 未认证限额 10 req/min
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+
+  - id: C10
+    name: 云笔记同步
+    description: 笔记/待办云端读写
+    preferred_impl: youdao-note MCP（本地 exe stdio）
+    alternatives: [Obsidian 本地库+git, Notion MCP]
+    depends_on: {skill: [], mcp: [youdao-note], cli: [youdao-note-mcp.exe], api: []}
+    install_steps: [mcp.json 注册 stdio 服务器，env YOUDAONOTE_API_KEY]
+    config_requirements: [YOUDAONOTE_API_KEY]
+    verify_steps: [MCP 列出笔记目录]
+    limits: 未在本轮做 MCP 实测（NOT_TESTED）
+    supported_clients: [trae, workbuddy, claude-code, generic-agent]
+    status: NOT_TESTED
+
+  - id: C11
+    name: 飞书协作（IM/文档/表格等）
+    description: 消息、云文档、表格、日历、任务、多维表格等
+    preferred_impl: Trae lark 插件（22 skills，插件形态）
+    alternatives: [飞书开放平台 REST 自建 MCP + 3 个最小技能(发消息/读写文档/读写表格)]
+    depends_on: {skill: [adapters/generic-agent/feishu-minimal.md], mcp: [自建 lark-mcp], cli: [], api: [open.feishu.cn OpenAPI]}
+    install_steps: [创建企业自建应用→拿 app_id/app_secret→按需加权限点→封装 stdio MCP]
+    config_requirements: [FEISHU_APP_ID, FEISHU_APP_SECRET]
+    verify_steps: [发一条测试消息到自建群（人工授权后）]
+    limits: 无插件市场的客户端只能走平替；权限点需管理员审批
+    supported_clients: [trae]
+    status: DISCOVERED
+
+  - id: C12
+    name: 办公文档产出
+    description: docx/xlsx/pptx/pdf 生成与编辑
+    preferred_impl: Trae office-plugin
+    alternatives: [python-docx, openpyxl, python-pptx, reportlab（纯本地，跨客户端）]
+    depends_on: {skill: [], mcp: [], cli: [python], api: []}
+    install_steps: [隔离 venv 内 pip install python-docx openpyxl python-pptx reportlab]
+    config_requirements: []
+    verify_steps: [生成各格式样本并能重新打开解析]
+    limits: 本轮未安装（无新增需求时不预装）
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: DISCOVERED
+
+  - id: C13
+    name: 二级聚合情报源（资源雷达 radar.zichuanlan.top）
+    description: 聚合 112 个上游源（LINUX DO/NodeSeek/V2EX/Telegram/RSS/GitHub 清单等）的二级雷达，补充用户未订阅的新技术与新项目
+    preferred_impl: 06_techradar/scripts/collect_zcl.py（公开只读 API：/health /api/items /api/items/{id} /api/rss）
+    alternatives: [/api/rss 订阅（dc:source 含上游源）, Playwright 渲染采集（仅在 API 失效时）]
+    depends_on:
+      skill: [06_techradar/SKILL.md]
+      mcp: []
+      cli: [python]
+      api: [radar.zichuanlan.top 公开只读接口]
+    install_steps: [无需安装；脚本内置限速 1.6s 与退避重试]
+    config_requirements: []
+    verify_steps:
+      - python tests/test_zcl_integration.py（13 项断言，含真实采集/幂等/跨源/溯源/回归）
+      - 二跑采集 inserted=0 且总行数不变
+    limits: "管理接口 401 不触碰；上游 4 个 GitHub 采集器演示站当前禁用；正文覆盖率低（实测 2/8）；偶发读超时已内置重试"
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+
+  - id: C14
+    name: 情报持续采集与数据库生命周期管理
+    description: 四类周期任务（日/周/月/季）+ 价值动态评分 + 分档保留策略 + 备份/删除日志/恢复 + 任务注册表，独立于 AI 对话运行
+    preferred_impl: 06_techradar/scripts/lifecycle_run.py + scheduler.py + _shared/skillkit/lifecycle.py
+    alternatives: [cron（Linux/macOS）, 手动执行 lifecycle_run.py 各 job]
+    depends_on:
+      skill: [06_techradar/SKILL.md]
+      mcp: []
+      cli: [python, schtasks]
+      api: []
+    install_steps:
+      - python 06_techradar/scripts/scheduler.py --action status（先检查，避免重复）
+      - python 06_techradar/scripts/scheduler.py --action install（幂等创建/同步）
+      - python 06_techradar/scripts/scheduler.py --action trigger-test（首次触发验证）
+    config_requirements: [06_techradar/data/lifecycle_config.json（apply_purge 默认 false）]
+    verify_steps:
+      - python tests/test_lifecycle.py（36 项断言：策略/保护/观察期/降采样/删除日志/恢复/完整性/CLI）
+      - job_runs 新记录含开始结束时间、采集/入库/去重/失败/清理数量与状态
+    limits: "默认 dry-run；apply_purge=false 时 --apply 也被拦截；P0/收藏/洞察/深读永不自动删除；非 Windows 需改用 cron"
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PARTIAL
+
+  - id: C15
+    name: 情报检索增强（FTS5 全文 / 时间 / 标签 / 来源 / 关联）
+    description: 在既有 SQLite 上增量实现 FTS5 全文索引与多条件组合查询，LIKE 自动降级，索引未回填时自愈
+    preferred_impl: _shared/skillkit/search.py + 06_techradar/scripts/radar_query.py
+    alternatives: [纯 LIKE 查询（旧行为，仍可用）]
+    depends_on: {skill: [06_techradar/SKILL.md], mcp: [], cli: [python], api: []}
+    install_steps: [无需安装；首次使用执行 radar_query.py --init-fts 回填索引]
+    config_requirements: []
+    verify_steps: [python tests/test_remediation.py（FTS/时间/标签/来源/关联/组合 7 项断言）]
+    limits: "FTS5 依赖 SQLite 编译选项（本机 3.50.4 已启用）；只读连接无法回填时自动降级 LIKE"
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+
+  - id: C16
+    name: 视频基础渲染（跨客户端最小渲染）
+    description: 多段拼接 + 画幅转换 + 字幕 + 可选授权 BGM + loudnorm + 导出 + 自动 QC
+    preferred_impl: 03_video/scripts/render.py
+    alternatives: [aitoearn（Trae 内满血剪辑执行）]
+    depends_on: {skill: [03_video/SKILL.md], mcp: [], cli: [python, ffmpeg, ffprobe], api: []}
+    install_steps: [无需安装；依赖 ffmpeg/libx264/aac/drawtext/中文字体]
+    config_requirements: [03_video/assets/BGM_LICENSES.json（未登记 BGM 一律拒绝）]
+    verify_steps: [python tests/test_remediation.py（渲染产出/画幅/QC/授权闸门 4 项断言）]
+    limits: "只做基础项，复杂混剪仍以 aitoearn 为准；缺编码器/字体/授权 BGM 时明确 BLOCKED"
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+
+  - id: C17
+    name: 双通道技术情报采集（公开 + 认证）
+    description: 通道 A 零凭证公开采集（HN/GitHub/HF/arXiv/官方博客 RSS/资源雷达），通道 B 认证采集（Folo Cookie、Reddit OAuth），统一入库与 FTS5 检索、互不阻塞
+    preferred_impl: 06_techradar/scripts/collect_public_suite.py + collect_folo.py + collect_reddit.py + _shared/skillkit/{pipeline,sources,http}.py
+    alternatives: [各采集器单独调用（仍走同一管线）]
+    depends_on:
+      skill: [06_techradar/SKILL.md]
+      mcp: []
+      cli: [python]
+      api: [hn.algolia.com, api.github.com, huggingface.co, export.arxiv.org, api.follow.is, www.reddit.com/api/v1, oauth.reddit.com]
+    install_steps:
+      - 通道 A 无需任何配置
+      - 通道 B：复制 .env.example 为 .env 并填入 FOLO_SESSION_TOKEN / REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET
+    config_requirements: [".env（FOLO_SESSION_TOKEN、REDDIT_CLIENT_ID、REDDIT_CLIENT_SECRET），未配置即标记 AUTH_REQUIRED/APPROVAL_REQUIRED"]
+    verify_steps: [python tests/test_dual_channel.py（A1-A4、B1-B5、C1-C3、D1-D2）]
+    limits: "Reddit 真实采集需官方 app-registration 与访问审批；Folo 需用户会话 Cookie；两者缺失时通道 A 照常运行"
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PARTIAL
+
+  - id: C18
+    name: 按需深度阅读与溯源校验
+    description: title_scanned→content_fetched→content_read→analyzed 四级真实推进；入库前 URL/origin 校验与隔离区；robots 合规
+    preferred_impl: 06_techradar/scripts/radar_read.py + _shared/skillkit/provenance.py
+    alternatives: [人工编辑 read_state（不推荐，无处理日志）]
+    depends_on:
+      skill: [06_techradar/SKILL.md]
+      mcp: []
+      cli: [python]
+      api: []
+    install_steps: [无需安装；read_log / provenance_quarantine 表按需自动创建]
+    config_requirements: []
+    verify_steps: [python tests/test_quality_review.py（R2/R3/R4 共 14 项断言，含本地 fixture 抓取）]
+    limits: "只抓公开 URL 且遵守 robots；短正文/非文本类型/403 不推进状态；不批量伪造阅读状态"
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+
+  - id: C19
+    name: 黑客与安全技术情报采集
+    description: 12 个全球头部黑客/安全媒体 RSS + GitHub Security Advisories（GHSA/CVE/CVSS）+ CISA KEV 在野利用目录，零凭证直采入本地情报库
+    preferred_impl: 06_techradar/scripts/public_sources.py（sec_rss / sec_restricted / github_advisories / cisa_kev）
+    alternatives: [Camoufox / headless=False 真指纹浏览器（The Record、Packet Storm）, WebSearch 手工整理（无持久化，不推荐）]
+    depends_on:
+      skill: [06_techradar/SKILL.md]
+      mcp: []
+      cli: [python]
+      api: [thehackernews.com, krebsonsecurity.com, darkreading.com, hackread.com, cyberscoop.com, cybersecuritydive.com, securelist.com, portswigger.net, seclists.org, paper.seebug.org, api.github.com, cisa.gov]
+    install_steps: []
+    config_requirements: []
+    verify_steps: [python 06_techradar/scripts/collect_public_suite.py --only sec_rss,sec_restricted,github_advisories,cisa_kev --limit 10（sec_restricted 三级回退：16 条/10.6s，通道 impersonate 8 + browser 8；复跑 inserted=0）]
+    limits: "The Record（Cloudflare Just a moment）与 Packet Storm（packetstorm.news TOS 同意页）无头浏览器仍拦，如实跳过；BleepingComputer 走无头浏览器通道（需 pip install playwright + 本机 chromium；缺失则自动跳过）；Exploit-DB 依赖 curl_cffi；SecurityWeek 依赖 SKILLKIT_PROXY；GitHub 未认证 60 req/h"
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+  - id: C20
+    name: 情报正文回源抓取
+    description: RSS/API 只给标题与摘要（实测均值 254 字符），本能力把条目回源抓成完整正文并落 article_bodies，供 FTS 检索与技术细节引用
+    preferred_impl: 06_techradar/scripts/fetch_bodies.py
+    alternatives: [Resource Radar /api/items/<id> 的 content 字段（仅覆盖其上游）, WebSearch 摘要（不可持久化，不用）]
+    depends_on:
+      skill: [06_techradar/SKILL.md, 01_crawler/SKILL.md]
+      mcp: []
+      cli: [python]
+      api: []
+    install_steps: [pip install trafilatura（正文抽取首选，缺失则退 readability/内置正则）, pip install playwright（浏览器第三级回退，可选）]
+    config_requirements: [SKILLKIT_BROWSER_EXE（可选，默认 D:/00_skiill_ku/01_crawler/runtime/Playwright/chromium-1243/chrome-win64/chrome.exe）]
+    verify_steps: [python 06_techradar/scripts/fetch_bodies.py --db 06_techradar/data/techradar.db --category security --limit 5（实测 5/5 ok，均值 4362 字符）, --stats 查看 status 分布与通道占比]
+    limits: "付费墙/纯 JS 站会落 too_short 或 blocked，不得据此编造内容；单条 1-9 秒，按限速跑，daily 每轮只补 30 条；正文截断上限 120000 字符"
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+
+  - id: C21
+    name: 花叔Design 视觉设计与 Deck 导出
+    description: 用 HTML 做高保真网页/幻灯片/信息图/动效；幻灯片按视觉稿渲染后零改造导出可编辑 PPTX（文本、形状、图片分层）
+    preferred_impl: 04_design（canonical v3.4.2，scripts/pptx_from_rendered.py 走渲染后坐标）
+    alternatives: [office-plugin pptx（在既有模板内改）, pptxgenjs 手写坐标（维护成本高，不推荐）]
+    depends_on:
+      skill: [04_design/SKILL.md, 04_design/references/modules/deck.md, 04_design/references/pptx-from-rendered-html.md]
+      mcp: []
+      cli: [python, node, playwright, python-pptx, Pillow]
+      api: []
+    install_steps:
+      - git clone https://github.com/alchaincyf/huashu-design 到 D:\00_skiill_ku\04_design
+      - Trae 入口 ~\.trae-cn\skills\huashu-design\SKILL.md 指向 canonical（本机已建）
+    config_requirements: [PLAYWRIGHT_BROWSERS_PATH=D:\00_skiill_ku\01_crawler\runtime\Playwright]
+    verify_steps:
+      - python 04_design/scripts/capabilities.py
+      - python 04_design/scripts/pptx_from_rendered.py deck.html -o deck.pptx --selector ".slide"
+    limits: 新视觉方向默认需过三方向门；pptx_from_rendered 按 1920px=26.667in 出画布，需再缩放 0.5 到 13.333in；字体只带一种，需按字号后处理衬线/无衬线；改字要回 HTML 重出
+    supported_clients: [trae, claude-code, generic-agent]
+    status: PASS
+  - id: C22
+    name: 视频时长守卫与冻结/静音质检
+    description: 三道确定性门禁拦截两类怪片——几秒桥段被拉长、只剪前几秒就收工：EDL 段范围校验、逐段实得时长校验、成片 vs 计划时长偏差校验；QC 复核时长守卫 + freezedetect 冻结 + silencedetect 静音
+    preferred_impl: 03_video/scripts/montage_edit.py（三道守卫）+ 03_video/scripts/video_qc.py --plan-json（QC 兜底）
+    alternatives: [render.py 整段拼接（无裁剪场景）, 人工看片（不可靠）]
+    depends_on:
+      skill: [03_video/SKILL.md, 03_video/examples/edl_example.json]
+      mcp: []
+      cli: [ffmpeg, ffprobe, python]
+      api: []
+    install_steps: []
+    config_requirements: []
+    verify_steps:
+      - python 03_video/scripts/montage_edit.py --edl <edl.json> --out out.mp4（2026-11-21 实测：计划 5.5s 实得 5.52s，guard PASS）
+      - 恶意 EDL start=4+dur=8（源 8s）→ BLOCKED 且提示该源最多可用 4.00s（实测）
+      - python 03_video/scripts/video_qc.py --video frozen.mp4 --out qc --plan-duration 30 → FAIL（冻结 5s + 时长偏差 25s，实测）
+      - 大象45s 成片 QC：45.04s vs 计划 45.0 PASS、1920x1080；固定机位雪原长镜冻结 4.28s 以 --max-freeze 6 显式声明放行（帧差 0.43-1.30 且源素材同量级，非真死帧）（2026-11-22 实测）
+    limits: 冻结阈值 3s / 时长容差 1s / 段容差 0.35s / 冻结上限 --max-freeze 可经参数覆盖——艺术片固定机位项目显式声明放宽，冻结事实仍完整记录，禁止静默调低阈值
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+  - id: C23
+    name: 全分类情报正文回源
+    description: RSS 只当检索层，命中后回源爬全文落 article_bodies；daily 生命周期每轮补 security 30 条 + 全分类 15 条，长尾轮次递补
+    preferred_impl: 06_techradar/scripts/fetch_bodies.py --all（等价 --category ""；PowerShell 下务必用 --all）+ lifecycle_run.py run_collectors
+    alternatives: [仅读 RSS 摘要（约 254 字，不满足引用需求，禁止只做这一层）]
+    depends_on:
+      skill: [06_techradar/SKILL.md, 01_crawler/SKILL.md]
+      mcp: []
+      cli: [python, ffmpeg]
+      api: []
+    install_steps: []
+    config_requirements: []
+    verify_steps:
+      - python 06_techradar/scripts/fetch_bodies.py --db 06_techradar/data/techradar.db --category security --limit 5（2026-11-21 实测 5/5 ok，21,536 字，通道 http）
+      - --stats 查看进度：库内 119 篇 ok / 均值 7,536 字（RSS 摘要的 30 倍）
+    limits: 付费墙/纯 JS 站落 too_short/blocked 不编造；单条 1-9s 限速；Playwright 通道依赖 chromium-1243 内核（已在 01_crawler/runtime）
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+  - id: C24
+    name: 中文子串检索召回
+    description: FTS5 unicode61 把握手中文整段当单 token，导致"甲骨文"这类子串 0 命中；命中为空且查询含 CJK 时自动降级 LIKE，并把 article_bodies 正文层纳入 LIKE
+    preferred_impl: _shared/skillkit/search.py::query_entries（engine=auto 自动处理）
+    alternatives: [手工改 engine=like（会失去英文 FTS 精度）]
+    depends_on:
+      skill: [06_techradar/SKILL.md]
+      mcp: []
+      cli: [python]
+      api: []
+    install_steps: []
+    config_requirements: []
+    verify_steps:
+      - radar_query.py --db <库> --keywords "甲骨文" → engine=like，命中正文层条目（2026-11-22 实测 hits=2）
+      - radar_query.py --db <库> --keywords "Inkling" → 仍走 engine=fts5（回归不变）
+    limits: LIKE 子串检索不走索引，库超过十万条时明显变慢；当前 972 条量级无感
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+  - id: C25
+    name: 静音检测与无音轨告警
+    description: silencedetect 是音频滤镜，必须走 -af（此前误用 -vf 导致静音段永远检测为空）；montage_edit 在"素材无音轨且无 BGM"时输出 audio_source=silence 并告警
+    preferred_impl: 03_video/scripts/video_qc.py（silencedetect）+ montage_edit.py（audio_source）
+    alternatives: [只看 volumedetect 峰值（会漏掉"有声但长时间静音"的片子）]
+    depends_on:
+      skill: [03_video/SKILL.md]
+      mcp: []
+      cli: [ffmpeg, python]
+      api: []
+    install_steps: []
+    config_requirements: []
+    verify_steps:
+      - 15s 静音成片 → 报告"静音段 0–15.02s" + FAIL 峰值 -91dB（2026-11-22 实测）
+      - 6s 有原声运动片 → QC PASS，静音段无（2026-11-22 实测）
+      - 静态素材 4s → 冻结段 4.02–8.02 被判 FAIL（防"几秒素材拉长"）
+      - 大象45s 成片 QC：静音段无 / 均值 -26.2dB / 峰值 -1.6dB / aac 48k 立体声（2026-11-22 实测）
+      - 音频门禁参数备注：能量空档三级分类（<0.8s 自然停顿忽略 / 0.8–1.5s 疑似吃字 warn / >1.5s 吃字 block）由 audio_skill.audio_diagnose 承载；侧链 ducking 达标线 6dB（is_mix=True 实测 ducking_db ≤ -6dB，不达标自动加强重混）由 montage_edit.measure_duck 闭环；大象45s 实测压低 7.0dB PASS
+    limits: 静音阈值默认 -50dB / 6s；BGM 必须登记在 03_video/assets/BGM_LICENSES.json，未登记不得混入
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+  - id: C26
+    name: 流水线鲁棒性审计与自适应升级
+    description: 修复三板斧——硬编码参数动态化（BGM ducking 混音后实测、<6dB 自动加强 ratio/threshold 重混）、素材检索 0 命中三级降级梯子（empty_shot_with_vo 打标不中断）、监控台账假空转排查（stdout 全文扫描 SUMMARY 行 + SQLite job_runs 对账）
+    preferred_impl: pipeline-robustness-audit skill
+    alternatives: [手工改产物 JSON（红线禁止，必须改源头脚本重跑）, 调低阈值消灭告警（掩耳盗铃，禁止）]
+    depends_on:
+      skill: ["~/.trae-cn/skills/pipeline-robustness-audit/SKILL.md"]
+      mcp: []
+      cli: [python, ffmpeg]
+      api: []
+    install_steps: []
+    config_requirements: [executor=D:\00_skiill_ku\.venv\Scripts\python.exe]
+    verify_steps:
+      - montage_edit.py 渲染后实测 ducked-BGM 轨压低 7.0dB（台词窗内 -48.5dB vs 窗外 -41.5dB），guard=PASS（audio_duck_check.json，2026-11-22 实测）
+      - material_retrieve.py 严格查询 0 命中 → 三级降级梯子第二级命中 2 条 empty_shot_with_vo，exit 0 流水线继续（2026-11-22 实测）
+      - lifecycle_run.py stdout_full 全文解析：单元验证旧逻辑 collected=0 → 新逻辑 collected=60；两轮手动采集 SUMMARY collected=180/185 与 DB first_seen_at 增量严格对账（2026-11-22 实测）
+    limits: 禁止为消灭警告修改判定标准；修复杂参赛产出必须重跑流水线并在 _logs/ 留痕；try/except 吞异常必须在日志打印警告
+    supported_clients: [trae, workbuddy, loomi, claude-code, generic-agent]
+    status: PASS
+  - id: C27
+    name: BOSS 自动投递（受控）
+    description: Chrome CDP 接管已登录 boss-helper，按星期额度/中厂小厂配额/搜索词权重投递实习岗；资产逐字校验、失败重试、额度用尽安全挂起并写 state.json
+    preferred_impl: 07_bossauto/run_scheduled.ps1 + bossctl.js
+    alternatives: [人工在 BOSS 网页逐个打招呼（无额度计划与台账）, 其他平台自动化（未验证，不推荐）]
+    depends_on:
+      skill: [07_bossauto/SKILL.md, 07_bossauto/README.md]
+      mcp: []
+      cli: [node, powershell, chrome]
+      api: [BOSS 直聘网页 + boss-helper 扩展]
+    install_steps: [安装 boss-helper 扩展并登录, 准备 assets/resume.png, ensure_chrome.ps1 拉起 CDP 9222]
+    config_requirements: [tiers.json, companies.json, 有效 BOSS 登录态]
+    verify_steps:
+      - node --test 07_bossauto/tests/test_pipeline.js（10 项离线链路 PASS，2026-11-24 实测）
+      - node bossctl.js plan（输出当日额度计划，不投递）
+      - node bossctl.js extread（招呼语/简历图/limit 校验）
+    limits: 平台免费账号约 100 次/日主动开聊；掉登录/验证码/页面改版即中断；不能绕过风控；实际投递成功率受登录态与平台策略影响
+    supported_clients: [trae]
+    status: PARTIAL

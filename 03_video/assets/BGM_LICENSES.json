@@ -1,0 +1,19 @@
+{
+  "schema": "bgm-licenses-v1",
+  "policy": "只有登记在此表、且 license 字段非空的音频，才允许被 render.py 混入成片。未登记的音频一律拒绝使用；禁止自动使用版权不明音乐。",
+  "fields": ["path", "name", "license", "source", "attribution", "downloaded_at", "sha256"],
+  "default_expected_path": "E:\\Trae_Video_Workspace\\bgm.mp3",
+  "default_expected_state": "MISSING（2026-11-17 审计确认不存在；需人工放入并在此登记）",
+  "bgm": [
+    {
+      "path": "D:\\00_skiill_ku\\03_video\\assets\\elephant\\bgm\\志铭.m4a",
+      "name": "志铭 — 犬儒乐队",
+      "license": "unknown（用户明确指定使用；仅限个人混剪/非商用，商用前必须另行取得授权）",
+      "usage": "user_directed",
+      "source": "bilibili av1301333125（Hi-Res 音源，B站）",
+      "attribution": "犬儒乐队《志铭》",
+      "downloaded_at": "2026-11-22",
+      "sha256": "862dcb6e78aa6200ac5832771dd29835553f4eeccfead70b095362d165cedcc2"
+    }
+  ]
+}

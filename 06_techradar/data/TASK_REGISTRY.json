@@ -1,0 +1,127 @@
+{
+  "schema": "techradar-task-registry-v1",
+  "registry_version": "1.3.0",
+  "skill_version": "1.4.0",
+  "updated_at": "2026-11-24T19:29:03",
+  "runner": "D:\\00_skiill_ku\\06_techradar\\scripts\\lifecycle_run.py",
+  "python": "D:\\00_skiill_ku\\.venv\\Scripts\\python.exe",
+  "database": "D:\\00_skiill_ku\\06_techradar\\data\\techradar.db",
+  "config": "D:\\00_skiill_ku\\06_techradar\\data\\lifecycle_config.json",
+  "scheduler": "windows-task-scheduler",
+  "notes": [
+    "2026-11-24 台账纠偏：原 registry 停在 skill_version=1.2.0 / last_run_at=2026-11-17，已按 job_runs 实际记录回填。",
+    "skill_version 必须与 canonical 06_techradar/SKILL.md（1.4.0）一致；若写成 1.3.0 会低于当前 Skill，触发重复 install。registry_version=1.3.0 表示本次台账结构版本。",
+    "错过补跑策略（2026-11-24 17:38 已生效）：StartWhenAvailable=True、DisallowStartIfOnBatteries=False、StopIfGoingOnBatteries=False、WakeToRun=True。",
+    "TaskScheduler/Operational 日志当前 IsEnabled=False；后续如需任务级取证，需在管理员 PowerShell 启用该日志。"
+  ],
+  "tasks": [
+    {
+      "last_run_at": "2026-11-24T17:47:30",
+      "last_status": "PASS",
+      "task_key": "TechRadar_Daily",
+      "name": "TechRadar 每日采集",
+      "schedule": "DAILY 07:30",
+      "next_run_at": "2026-11-25T07:30:00",
+      "script_path": "D:\\00_skiill_ku\\06_techradar\\scripts\\lifecycle_run.py",
+      "args": "--job daily",
+      "skill_version": "1.4.0",
+      "action": "D:\\00_skiill_ku\\06_techradar\\scripts\\tasks\\daily.cmd",
+      "config_hash": "6b9f6348e9ed023a",
+      "last_result": "RUN_OK",
+      "last_run_detail": {
+        "run_id": 15,
+        "mode": "dry-run",
+        "started_at": "2026-11-24T17:47:30",
+        "finished_at": "2026-11-24T18:13:02",
+        "collected": 310,
+        "inserted": 150,
+        "deduped": 160,
+        "failed": 0,
+        "purged": 0,
+        "report": "D:\\00_skiill_ku\\_reports\\lifecycle\\daily_20261124_174730.md"
+      },
+      "notes": [
+        "2026-11-24 17:38 修复任务设置后，17:47 手动补跑 run_id=15：PASS，collected=310 / inserted=150 / deduped=160 / failed=0；覆盖 11-23、11-24 数据缺口。",
+        "11-24 07:30 漏跑原因（已取证）：主机自 2026-11-23 15:07 进入睡眠，直到 2026-11-24 17:20 才唤醒（Microsoft-Windows-Power-Troubleshooter Event ID 1：Sleep Time 2026-11-23T07:07:16Z → 2026-11-24 17:20 返回）。旧任务设置 StartWhenAvailable=False，睡眠期间错过的触发不会补跑。",
+        "11-23 07:30 漏跑原因（高置信推断）：TaskScheduler/Operational 日志 IsEnabled=False，无任务级事件可取；备份的 task_before.xml 显示 DisallowStartIfOnBatteries=true、StopIfGoingOnBatteries=true，且 StartWhenAvailable 缺省为 false——电池供电或短暂休眠均会阻止启动且不补跑。",
+        "排除“修改计划任务导致冲突”：任务设置修改发生在 2026-11-24 17:38，晚于两次漏跑；不是修改动作造成的漏跑。",
+        "下次触发已确认：2026-11-25 07:30:00，LastTaskResult=0，NumberOfMissedRuns=0。"
+      ],
+      "updated_at": "2026-11-24T19:29:03",
+      "wrapper": "D:\\00_skiill_ku\\06_techradar\\scripts\\tasks\\daily.cmd",
+      "action_command": "\"D:\\00_skiill_ku\\.venv\\Scripts\\python.exe\" \"D:\\00_skiill_ku\\06_techradar\\scripts\\lifecycle_run.py\" --job daily"
+    },
+    {
+      "last_run_at": "2026-11-22T08:00:00",
+      "last_status": "PASS",
+      "task_key": "TechRadar_Weekly",
+      "name": "TechRadar 每周体检",
+      "schedule": "WEEKLY SUN 08:00",
+      "next_run_at": "2026-11-29T08:00:00",
+      "script_path": "D:\\00_skiill_ku\\06_techradar\\scripts\\lifecycle_run.py",
+      "args": "--job weekly",
+      "skill_version": "1.4.0",
+      "action": "D:\\00_skiill_ku\\06_techradar\\scripts\\tasks\\weekly.cmd",
+      "config_hash": "798459f60d311e26",
+      "last_result": "RUN_OK",
+      "last_run_detail": {
+        "run_id": 13,
+        "mode": "dry-run",
+        "started_at": "2026-11-22T08:00:00",
+        "finished_at": "2026-11-22T08:00:30",
+        "collected": 0,
+        "inserted": 0,
+        "deduped": 0,
+        "failed": 0,
+        "purged": 0,
+        "report": "D:\\00_skiill_ku\\_reports\\lifecycle\\weekly_20261122_080000.md"
+      },
+      "notes": [
+        "按 job_runs 回填 11-22 首次 weekly 运行；NextRunTime=2026-11-29 08:00，LastTaskResult=0。"
+      ],
+      "updated_at": "2026-11-24T19:29:03",
+      "wrapper": "D:\\00_skiill_ku\\06_techradar\\scripts\\tasks\\weekly.cmd",
+      "action_command": "\"D:\\00_skiill_ku\\.venv\\Scripts\\python.exe\" \"D:\\00_skiill_ku\\06_techradar\\scripts\\lifecycle_run.py\" --job weekly"
+    },
+    {
+      "last_run_at": null,
+      "last_status": null,
+      "task_key": "TechRadar_Monthly",
+      "name": "TechRadar 每月维护",
+      "schedule": "MONTHLY 1 09:00",
+      "next_run_at": "2026-12-01T09:00:00",
+      "script_path": "D:\\00_skiill_ku\\06_techradar\\scripts\\lifecycle_run.py",
+      "args": "--job monthly",
+      "skill_version": "1.4.0",
+      "action": "D:\\00_skiill_ku\\06_techradar\\scripts\\tasks\\monthly.cmd",
+      "config_hash": "f11e40e5fa16131a",
+      "last_result": "NOT_RUN_YET",
+      "notes": [
+        "尚未到首次触发时间；NextRunTime=2026-12-01 09:00，LastTaskResult=267011（任务尚未运行，非失败）。"
+      ],
+      "updated_at": "2026-11-24T19:29:03",
+      "wrapper": "D:\\00_skiill_ku\\06_techradar\\scripts\\tasks\\monthly.cmd",
+      "action_command": "\"D:\\00_skiill_ku\\.venv\\Scripts\\python.exe\" \"D:\\00_skiill_ku\\06_techradar\\scripts\\lifecycle_run.py\" --job monthly"
+    },
+    {
+      "last_run_at": null,
+      "last_status": null,
+      "task_key": "TechRadar_Quarterly",
+      "name": "TechRadar 每季审计",
+      "schedule": "MONTHLY 1 JAN,APR,JUL,OCT 10:00",
+      "next_run_at": "2027-01-01T10:00:00",
+      "script_path": "D:\\00_skiill_ku\\06_techradar\\scripts\\lifecycle_run.py",
+      "args": "--job quarterly",
+      "skill_version": "1.4.0",
+      "action": "D:\\00_skiill_ku\\06_techradar\\scripts\\tasks\\quarterly.cmd",
+      "config_hash": "e79f790fbd39e8ed",
+      "last_result": "NOT_RUN_YET",
+      "notes": [
+        "尚未到首次触发时间；NextRunTime=2027-01-01 10:00，LastTaskResult=267011（任务尚未运行，非失败）。"
+      ],
+      "updated_at": "2026-11-24T19:29:03",
+      "wrapper": "D:\\00_skiill_ku\\06_techradar\\scripts\\tasks\\quarterly.cmd",
+      "action_command": "\"D:\\00_skiill_ku\\.venv\\Scripts\\python.exe\" \"D:\\00_skiill_ku\\06_techradar\\scripts\\lifecycle_run.py\" --job quarterly"
+    }
+  ]
+}

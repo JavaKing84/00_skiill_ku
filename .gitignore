@@ -1,0 +1,49 @@
+# 凭据与本地机密：禁止提交
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# 数据库与备份（含真实情报与凭据衍生数据）
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+_backup/
+
+# 运行时与缓存
+.venv/
+__pycache__/
+*.pyc
+node_modules/
+
+# 浏览器登录态副本（含 Cookie，严禁提交）
+_browser_profile/
+cookies_*.db
+06_techradar/data/browser_session.json
+
+# 数据库备份文件
+*.db.bak_*
+
+# 大体积运行时（浏览器内核 / 本地环境，需本地安装）
+/01_crawler/runtime/
+/01_crawler/repos/
+/03_video/models/
+
+# 独立 git 子仓库（第三方克隆，单独维护）
+/04_design/
+/05_school/
+/02_jobsearch/job_radar/
+/_interview_prep/repos/
+/_interview_prep/build/
+/_interview_prep/cache/
+
+# 媒体素材与渲染产物（体积过大）
+/03_video/assets/elephant/
+/03_video/analysis/
+/03_video/demo_out/
+
+# 日志与生成报告
+/_logs/
+/_reports/

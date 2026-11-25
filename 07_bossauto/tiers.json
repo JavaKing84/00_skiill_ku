@@ -1,0 +1,29 @@
+{
+  "dailyTotal": 10,
+  "dailyTotalNote": "保号优先：2026-11-24 账号级封禁后强制降至 10 份/日；严禁回调上调，除非人工长期观察无风控",
+  "weekdayQuota": { "1": 10, "2": 10, "3": 10, "4": 10, "5": 10, "6": 0, "0": 0 },
+  "weekdayQuotaNote": "每个工作日上限 10；周末 0（HR 休息且降低账号活跃异常）",
+  "companyQuota": { "big4": 4, "mid": 3, "small": 3 },
+  "queryWeights": {
+    "python 实习": 25,
+    "golang 实习": 25,
+    "AI 全栈 实习": 25,
+    "后端 实习": 25
+  },
+  "excludeNote": "只投 Python / Go / AI 全栈 / 后端；算法、Java、C/C++ 由扩展 jobTitle + jobContent 排除；实习与在校生由 BOSS URL experience=108&jobType=1902 限定",
+  "batchCap": { "morning": 10, "afternoon": 10, "evening": 10 },
+  "batchCapNote": "单批即全天额度；脚本内部按『每份间隔 5-10 分钟』逐份投递，不再分批冲量",
+  "humanize": {
+    "enabled": true,
+    "perApplyGapMinSec": 300,
+    "perApplyGapMaxSec": 600,
+    "readDwellMinSec": 5,
+    "readDwellMaxSec": 15,
+    "typeDelayMinMs": 150,
+    "typeDelayMaxMs": 400,
+    "preClickJitterMs": 200,
+    "startWindow": { "earliestHour": 9, "latestHour": 11 },
+    "startRandomDelayMaxMin": 90
+  },
+  "humanizeNote": "每投 1 份强制间隔 5-10 分钟；进入搜索/详情前先随机浏览停留 5-15 秒；启动时间在 9:00-11:00 窗口内随机"
+}

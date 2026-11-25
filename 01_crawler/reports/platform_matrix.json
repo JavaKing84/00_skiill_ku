@@ -1,0 +1,145 @@
+{
+  "generated_at": "2026-11-18T01:44:03",
+  "legend": "ok/status 为单次公开探测事实；render_layer 由 HTML 特征推断；logged_in 仅判定页面可见状态，未读取凭据",
+  "probes_total": 11,
+  "public_reachable": 7,
+  "logged_in_probes": {
+    "bilibili": "LOGGED_OUT",
+    "douyin": "BLOCKED_CHALLENGE",
+    "xiaohongshu": "BLOCKED_CHALLENGE"
+  },
+  "rows": [
+    {
+      "probe": "bili_home",
+      "platform": "bilibili",
+      "kind": "page",
+      "ok": true,
+      "http_status": 200,
+      "render_layer": "unknown",
+      "structured_data": false,
+      "media_hint": false,
+      "url": "https://www.bilibili.com/",
+      "blockers": null,
+      "note": null
+    },
+    {
+      "probe": "bili_popular_api",
+      "platform": "bilibili",
+      "kind": "api",
+      "ok": true,
+      "http_status": 200,
+      "json_ok": true,
+      "api_code": 0,
+      "url": "https://api.bilibili.com/x/web-interface/popular?ps=3&pn=1",
+      "blockers": null,
+      "note": null
+    },
+    {
+      "probe": "douyin_home",
+      "platform": "douyin",
+      "kind": "page",
+      "ok": true,
+      "http_status": 200,
+      "render_layer": "unknown",
+      "structured_data": false,
+      "media_hint": false,
+      "url": "https://www.douyin.com/",
+      "blockers": null,
+      "note": null
+    },
+    {
+      "probe": "douyin_hot_api",
+      "platform": "douyin",
+      "kind": "api",
+      "ok": true,
+      "http_status": 200,
+      "json_ok": false,
+      "url": "https://www.douyin.com/aweme/v1/web/hot/search/list/",
+      "blockers": null,
+      "note": null
+    },
+    {
+      "probe": "login_bilibili",
+      "platform": "bilibili",
+      "kind": "logged_in",
+      "http_status": 200,
+      "verdict": "LOGGED_OUT",
+      "challenge_detected": false,
+      "url": "https://www.bilibili.com/",
+      "blockers": null,
+      "note": "仅判定页面可见状态；未读取/导出任何凭据"
+    },
+    {
+      "probe": "login_douyin",
+      "platform": "douyin",
+      "kind": "logged_in",
+      "http_status": 200,
+      "verdict": "BLOCKED_CHALLENGE",
+      "challenge_detected": true,
+      "url": "https://www.douyin.com/",
+      "blockers": null,
+      "note": "仅判定页面可见状态；未读取/导出任何凭据"
+    },
+    {
+      "probe": "login_xiaohongshu",
+      "platform": "xiaohongshu",
+      "kind": "logged_in",
+      "http_status": 200,
+      "verdict": "BLOCKED_CHALLENGE",
+      "challenge_detected": true,
+      "url": "https://www.xiaohongshu.com/explore",
+      "blockers": null,
+      "note": "仅判定页面可见状态；未读取/导出任何凭据"
+    },
+    {
+      "probe": "reddit_api",
+      "platform": "reddit",
+      "kind": "api",
+      "ok": false,
+      "http_status": 403,
+      "error_kind": "auth",
+      "url": "https://www.reddit.com/r/technology/hot.json?limit=3",
+      "blockers": null,
+      "note": null
+    },
+    {
+      "probe": "wikipedia_scraping",
+      "platform": "generic_article",
+      "kind": "page",
+      "ok": true,
+      "http_status": 200,
+      "render_layer": "ssr",
+      "structured_data": true,
+      "media_hint": false,
+      "url": "https://en.wikipedia.org/wiki/Web_scraping",
+      "blockers": null,
+      "note": null
+    },
+    {
+      "probe": "xhs_explore",
+      "platform": "xiaohongshu",
+      "kind": "page",
+      "ok": true,
+      "http_status": 200,
+      "render_layer": "spa-shell",
+      "structured_data": true,
+      "media_hint": false,
+      "url": "https://www.xiaohongshu.com/explore",
+      "blockers": null,
+      "note": null
+    },
+    {
+      "probe": "youtube_home",
+      "platform": "youtube",
+      "kind": "page",
+      "ok": true,
+      "http_status": 200,
+      "render_layer": "ssr",
+      "structured_data": false,
+      "media_hint": false,
+      "url": "https://www.youtube.com/",
+      "blockers": null,
+      "note": null
+    }
+  ]
+}

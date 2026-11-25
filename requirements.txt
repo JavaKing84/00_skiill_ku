@@ -1,0 +1,18 @@
+# 本机全局环境实测版本（2026-11-17），项目 .venv 安装时固定以下版本
+# skillkit 核心仅需标准库；以下为采集/媒体/测试脚本的可选依赖
+requests==2.34.2
+pillow==13.0.0
+numpy==2.5.4
+opencv-python==5.0.0.93
+playwright==1.62.0
+PyYAML==6.0.3
+yt-dlp==2026.10.26
+imageio-ffmpeg==7.1
+# 正文抽取与受限站指纹（daily 采集链路使用）
+trafilatura==2.3.1
+readability-lxml==0.9
+curl_cffi==0.17.0
+# 04_design Deck 导出（pptx_from_rendered / html2pptx 测试）
+python-pptx==1.0.2
+# 视频素材落盘校验（material_crawler 下载后 ffprobe 校验）
+imageio-ffmpeg==0.8.1

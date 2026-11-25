@@ -1,0 +1,100 @@
+# 触发测试集：每个 Skill 15 正向 + 10 负向 + 5 组合
+# 校验方式：静态规则检查（tests/test_triggers.py）。真实模型路由测试需新会话，本文件不冒充路由证据。
+# expect: video | crawl | techradar | none
+# tokens: 必须出现在对应规则文件中的词（用于验证规则确实覆盖该表达）
+# avoid: 负向用例中不应触发的规则，其规则文件的"负向触发"段必须包含 tokens
+schema: trigger-cases-v1
+rules:
+  video: "C:\\Users\\26808\\.trae-cn\\user_rules\\rule-1794927301000.md"
+  crawl: "C:\\Users\\26808\\.trae-cn\\user_rules\\rule-1794927302000.md"
+  techradar: "C:\\Users\\26808\\.trae-cn\\user_rules\\rule-1794927303000.md"
+cases:
+  # ---------------- 视频 15 正向 ----------------
+  - {id: V01, expect: video, tokens: [剪辑], text: 帮我剪辑这段视频}
+  - {id: V02, expect: video, tokens: [短视频, 素材], text: 把这些素材制作成短视频}
+  - {id: V03, expect: video, tokens: [合并, 成片], text: 把多个视频合并成一个成片}
+  - {id: V04, expect: video, tokens: [参考视频, 复刻], text: 按某个参考视频复刻剪辑节奏}
+  - {id: V05, expect: video, tokens: [仿制], text: 分析参考视频后进行仿制}
+  - {id: V06, expect: video, tokens: [字幕, 配音], text: 添加字幕、花字、配音}
+  - {id: V07, expect: video, tokens: [BGM, 转场], text: 添加 BGM、音效和转场}
+  - {id: V08, expect: video, tokens: ["9:16"], text: 制作 9:16 竖屏版本}
+  - {id: V09, expect: video, tokens: [批量剪辑], text: 帮我批量剪辑这批素材}
+  - {id: V10, expect: video, tokens: [压缩, 导出], text: 视频压缩并导出}
+  - {id: V11, expect: video, tokens: [黑屏, 无声], text: 检查成片有没有黑屏无声}
+  - {id: V12, expect: video, tokens: [文案, 生成视频], text: 根据这段文案生成视频}
+  - {id: V13, expect: video, tokens: [封面], text: 帮我做一张视频封面}
+  - {id: V14, expect: video, tokens: [发布预览], text: 生成一个发布预览}
+  - {id: V15, expect: video, tokens: [画幅], text: 把这个视频转成 1:1 画幅}
+  # ---------------- 视频 10 负向 ----------------
+  - {id: V16, expect: none, avoid: video, tokens: [分析视频内容], text: 只分析一下视频内容}
+  - {id: V17, expect: none, avoid: video, tokens: [仅下载视频], text: 仅下载视频}
+  - {id: V18, expect: none, avoid: video, tokens: [视频生成技术], text: 研究视频生成技术}
+  - {id: V19, expect: none, avoid: video, tokens: [只讨论视频剪辑理论], text: 只讨论视频剪辑理论}
+  - {id: V20, expect: none, avoid: video, tokens: [只阅读单篇文章], text: 只阅读一篇文章}
+  - {id: V21, expect: none, avoid: video, tokens: [普通翻译], text: 翻译这段字幕文本}
+  - {id: V22, expect: none, avoid: video, tokens: [普通搜索], text: 搜索一下相关内容}
+  - {id: V23, expect: none, avoid: video, tokens: [单独修复一段代码], text: 单独修复这段代码的报错}
+  - {id: V24, expect: none, avoid: video, tokens: [普通业务功能], text: 帮我写个普通业务功能}
+  - {id: V25, expect: none, avoid: video, tokens: [网页技术概念], text: XHR 是什么概念}
+  # ---------------- 爬虫 15 正向 ----------------
+  - {id: C01, expect: crawl, tokens: [抓取这个网站的数据], text: 抓取这个网站的数据}
+  - {id: C02, expect: crawl, tokens: [采集网页正文], text: 采集网页正文和列表}
+  - {id: C03, expect: crawl, tokens: [抓取多个页面], text: 帮我抓取多个页面}
+  - {id: C04, expect: crawl, tokens: [批量下载], text: 批量下载网页里的图片}
+  - {id: C05, expect: crawl, tokens: [自动翻页], text: 写个自动翻页的采集}
+  - {id: C06, expect: crawl, tokens: [XHR], text: 提取这个网页的 XHR 接口数据}
+  - {id: C07, expect: crawl, tokens: [Playwright], text: 用 Playwright 写个爬虫}
+  - {id: C08, expect: crawl, tokens: [403], text: 这个站点返回 403 怎么分析}
+  - {id: C09, expect: crawl, tokens: [签名参数], text: 这个接口的签名参数怎么逆向}
+  - {id: C10, expect: crawl, tokens: [登录态], text: 需要登录态采集怎么办}
+  - {id: C11, expect: crawl, tokens: [断点续采], text: 实现断点续采和增量同步}
+  - {id: C12, expect: crawl, tokens: [多来源采集], text: 多个来源统一采集}
+  - {id: C13, expect: crawl, tokens: [保存到数据库], text: 采集后保存到数据库}
+  - {id: C14, expect: crawl, tokens: [性能优化], text: 爬虫的性能优化怎么做}
+  - {id: C15, expect: crawl, tokens: [找素材], text: 帮我找几个城市夜景的素材}
+  # ---------------- 爬虫 10 负向 ----------------
+  - {id: C16, expect: none, avoid: crawl, tokens: [打开某个网页], text: 帮我打开某个网页}
+  - {id: C17, expect: none, avoid: crawl, tokens: [阅读单篇文章], text: 读一下这篇文章}
+  - {id: C18, expect: none, avoid: crawl, tokens: [总结已经提供的文章], text: 总结我刚贴的文章}
+  - {id: C19, expect: none, avoid: crawl, tokens: [普通搜索], text: 搜一下这个话题}
+  - {id: C20, expect: none, avoid: crawl, tokens: [网页技术概念], text: 什么是反爬}
+  - {id: C21, expect: none, avoid: crawl, tokens: [视频剪辑], text: 帮我剪个视频}
+  - {id: C22, expect: none, avoid: crawl, tokens: [选型], text: 帮我做技术选型}
+  - {id: C23, expect: none, avoid: crawl, tokens: [普通翻译], text: 翻译这段英文}
+  - {id: C24, expect: none, avoid: crawl, tokens: [单独修复一段代码], text: 修一个普通 bug}
+  - {id: C25, expect: none, avoid: crawl, tokens: [只阅读用户已经提供的单篇文档], text: 看一下我给的这篇文档}
+  # ---------------- TechRadar 15 正向 ----------------
+  - {id: T01, expect: techradar, tokens: [新 AI 模型], text: 最近有什么值得关注的新 AI 模型}
+  - {id: T02, expect: techradar, tokens: [开源项目], text: 最近有哪些值得关注的开源项目}
+  - {id: T03, expect: techradar, tokens: [具身智能, 机器人, VLA], text: 具身智能和机器人方向最近有什么新进展}
+  - {id: T04, expect: techradar, tokens: [小模型], text: 小模型有什么新东西}
+  - {id: T05, expect: techradar, tokens: [Agent], text: Agent 方向最近的趋势}
+  - {id: T06, expect: techradar, tokens: [如何实现], text: 这个技术具体如何实现}
+  - {id: T07, expect: techradar, tokens: [组合], text: 怎么组合现有技术实现一个新产品}
+  - {id: T08, expect: techradar, tokens: [路线], text: 哪些技术路线更值得选择}
+  - {id: T09, expect: techradar, tokens: [GitHub], text: 调研某个 GitHub 仓库}
+  - {id: T10, expect: techradar, tokens: [维护], text: 检查这个项目是否还在维护}
+  - {id: T11, expect: techradar, tokens: [同类开源项目], text: 比较同类开源项目}
+  - {id: T12, expect: techradar, tokens: [收录], text: 把这个项目收录到技术情报库}
+  - {id: T13, expect: techradar, tokens: [情报源], text: 管理我的情报订阅源}
+  - {id: T14, expect: techradar, tokens: [上周], text: 上周收集了哪些值得关注的技术}
+  - {id: T15, expect: techradar, tokens: [定时任务], text: 检查并维护情报库的定时任务}
+  # ---------------- TechRadar 10 负向 ----------------
+  - {id: T16, expect: none, avoid: techradar, tokens: [基础概念解释], text: 解释一下 Python 的装饰器}
+  - {id: T17, expect: none, avoid: techradar, tokens: [单独修复一段代码], text: 修复这段代码}
+  - {id: T18, expect: none, avoid: techradar, tokens: [普通业务功能], text: 写个普通功能}
+  - {id: T19, expect: none, avoid: techradar, tokens: [普通翻译], text: 翻译这段话}
+  - {id: T20, expect: none, avoid: techradar, tokens: [只阅读用户已经提供的单篇文档], text: 读一下这篇文档}
+  - {id: T21, expect: none, avoid: techradar, tokens: [普通网页打开], text: 打开这个网页}
+  - {id: T22, expect: none, avoid: techradar, tokens: [视频剪辑], text: 剪视频}
+  - {id: T23, expect: none, avoid: techradar, tokens: [素材采集], text: 找几张素材图}
+  - {id: T24, expect: none, avoid: techradar, tokens: [润色], text: 润色一下这段话}
+  - {id: T25, expect: none, avoid: techradar, tokens: [普通翻译], text: 帮我翻译标题}
+  # ---------------- 多 Skill 组合 5 例 ----------------
+  - {id: X01, expect: crawl, combo: techradar, tokens: [入库], text: 抓取这个网站的数据并入库}
+  - {id: X02, expect: techradar, combo: video, tokens: [选题], text: 研究一下最近的机器人技术然后做成视频选题}
+  - {id: X03, expect: crawl, combo: video, tokens: [素材], text: 下载参考视频并剪辑}
+  - {id: X04, expect: techradar, combo: video, tokens: [调研], text: 调研视频生成技术再决定用什么工具剪}
+  - {id: X05, expect: techradar, combo: crawl, tokens: [深挖], text: 技术情报里提到的站点帮我深挖一下}
+
+
