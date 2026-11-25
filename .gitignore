@@ -56,6 +56,11 @@ config.local.*
 *.local.json
 _backup_*/
 
+# 隐私资料：只保留在本地，不入库
+/07_bossauto/assets/
+/_interview_prep/content/
+/_interview_prep/EXECUTION_REPORT.md
+
 # Agent 兼容层（本地生成，由 skills/ 同步）
 /.agents/skills/
 /.agents/*.lock
