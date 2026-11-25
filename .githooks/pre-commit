@@ -1,0 +1,14 @@
+#!/bin/sh
+# 提交前敏感信息扫描（由 git config core.hooksPath=.githooks 生效）
+ROOT="$(git rev-parse --show-toplevel)"
+PY="python"
+command -v python >/dev/null 2>&1 || PY="python3"
+
+"$PY" "$ROOT/_shared/secret_scan.py"
+STATUS=$?
+if [ $STATUS -ne 0 ]; then
+  echo ""
+  echo "提交已阻断：请先处理上述敏感信息，或使用 git commit --no-verify 明确跳过。"
+  exit $STATUS
+fi
+exit 0

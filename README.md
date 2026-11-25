@@ -29,6 +29,32 @@
 
 ---
 
+## 标准技能索引（`skills/`，2026-11-25 新增）
+
+`skills/` 是面向 npx / Agent 客户端的标准聚合层：只放 `SKILL.md` + `CHANGELOG.md`，
+通过相对路径映射到原有域目录，**不移动、不复制业务脚本**，老命令原地可用。
+
+| 技能 | 版本 | 领域 | 触发词（节选） | 映射到 |
+|---|---|---|---|---|
+| `03-video-pipeline` | 1.0.0 | 视频 | 剪辑 / 成片 / 字幕 / 配音 / QC / 发布预览 | `03_video/` |
+| `01-crawler` | 1.0.0 | 爬虫 | 抓取 / 采集 / 反爬 / 登录态 / 找素材 | `01_crawler/` |
+| `60s-api` | 1.0.0 | 数据源 | 每日新闻 / 热搜 / 天气 / 农历 / 翻译 | `skills/data/60s-api/scripts/fetch.py` |
+
+```powershell
+# 机器可读索引（扫描 skills/ 自动生成）
+& $PY _shared\build_skills_index.py        # 输出 skills.json
+
+# npx 识别验证
+npx -y skills add D:\00_skiill_ku --list   # 实测识别 10 个技能
+
+# 60s API 真实调用（主域名失败会自动回退公共实例）
+& $PY skills\data\60s-api\scripts\fetch.py --endpoint 60s
+```
+
+`.agents/skills/` 下已建立三个目录联接（Junction）指向 `skills/`，供只认 `.agents/skills/` 约定的客户端加载。
+
+---
+
 ## 怎么用
 
 **1）直接说需求（自动触发）**

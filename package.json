@@ -1,0 +1,21 @@
+{
+  "name": "skiill-ku",
+  "version": "1.0.0",
+  "private": true,
+  "description": "个人 AI Skill 技能库：视频剪辑流水线、网站采集协议、技术情报系统与公开 API 数据源",
+  "homepage": "https://github.com/JavaKing84/00_skiill_ku",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JavaKing84/00_skiill_ku.git"
+  },
+  "license": "UNLICENSED",
+  "keywords": ["agent-skills", "claude-skills", "video-pipeline", "crawler", "tech-radar"],
+  "engines": {
+    "node": ">=18"
+  },
+  "skills": [
+    "skills/video/*",
+    "skills/crawler/*",
+    "skills/data/*"
+  ]
+}

@@ -46,4 +46,16 @@ cookies_*.db
 
 # 日志与生成报告
 /_logs/
-/_reports/
+*.log
+logs/
+/_reports/*
+!/_reports/secret_audit.md
+
+# 本地配置覆盖（只保留示例）
+config.local.*
+*.local.json
+_backup_*/
+
+# Agent 兼容层（本地生成，由 skills/ 同步）
+/.agents/skills/
+/.agents/*.lock
